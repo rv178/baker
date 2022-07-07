@@ -1,0 +1,21 @@
+[build]
+cmd = "cargo build"
+
+[[custom]]
+name = "copy"
+cmd = "cp -r ./target/debug/bake ./bin/bake"
+run = true
+
+[[custom]]
+name = "clean"
+cmd = "cargo clean"
+run = false
+
+[[custom]]
+name = "setup"
+cmd = "mkdir -p bin && rustup install stable && rustup default stable"
+run = false
+
+[[pre]]
+name = "fmt"
+cmd = "cargo fmt"
