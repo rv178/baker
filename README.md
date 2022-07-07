@@ -2,14 +2,14 @@
 
 A simple build system
 
-### Compiling via make
+### Compiling via bake (release)
 
 ```
-make setup
-make release
+bake setup
+bake release
 ```
 
-A binary will be copied to `./bin/baker`
+A binary will be copied to `./bin/bake`
 
 ### Usage
 
@@ -18,6 +18,8 @@ bake
 ```
 
 ### Configuration
+
+Baker looks for a `recipe.toml` in the root directory.
 
 ```toml
 [build]
