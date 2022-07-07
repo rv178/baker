@@ -1,6 +1,6 @@
 # Baker
 
-A simple build system
+A simple build automation tool like GNU Make
 
 ### Compiling via bake (release)
 
