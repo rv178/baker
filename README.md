@@ -1,8 +1,8 @@
 # Baker
 
-A simple build automation tool like GNU Make
+A simple build automation tool like GNU Make.
 
-### Compiling via bake (release)
+### Compiling via baker (release)
 
 ```
 bake setup
