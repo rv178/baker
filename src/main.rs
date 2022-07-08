@@ -29,6 +29,13 @@ struct Pre {
     cmd: String,
 }
 
+#[macro_export]
+macro_rules! printb {
+    ($($arg:tt)*) => {
+        println!("\x1b[32mBaker:\x1b[0m {}", format!($($arg)*));
+    };
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -37,7 +44,7 @@ fn main() {
     let recipe: Recipe = toml::from_str(&recipe_str).expect("Failed to parse recipe.toml");
 
     if recipe.build.cmd.is_empty() {
-        println!("[Baker] Build command is empty.");
+        printb!("Build command is empty.");
         exit(1);
     }
 
@@ -78,7 +85,8 @@ fn main() {
 }
 
 fn run_cmd(name: String, cmd: String) {
-    println!("[Baker] Running command: `{}` ({})", cmd, name);
+    printb!("Running command: `{}` ({})", cmd, name);
+    print!("\n");
     let start = SystemTime::now();
 
     match Command::new("sh")
@@ -90,11 +98,12 @@ fn run_cmd(name: String, cmd: String) {
     {
         Ok(_) => {}
         Err(e) => {
-            println!("[Baker] Failed to execute command. Error: `{}` ({})", e, name);
+            printb!("Failed to execute command. Error: `{}` ({})", e, name);
         }
     }
     let end = SystemTime::now();
     let elapsed = end.duration_since(start);
 
-    println!("[Baker] Took {}ms", elapsed.unwrap_or_default().as_millis());
+    print!("\n");
+    printb!("Took {}ms", elapsed.unwrap_or_default().as_millis());
 }
