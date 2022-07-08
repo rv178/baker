@@ -64,7 +64,15 @@ fn main() {
         }
     }
 
-    let recipe: Recipe = toml::from_str(&recipe_str).expect("Failed to parse recipe.toml");
+    let recipe: Recipe;
+
+    match toml::from_str(&recipe_str) {
+        Ok(r) => recipe = r,
+        Err(e) => {
+            printb!("Error: {}", e);
+            exit(1);
+        }
+    }
 
     if recipe.build.cmd.is_empty() {
         printb!("Build command is empty.");
