@@ -94,21 +94,20 @@ fn main() {
         let custom = recipe.custom.unwrap();
 
         for c in custom {
-            let cmd = c.cmd.clone();
-            let name = c.name.clone();
-
             if c.run && args.len() == 1 {
                 run_cmd(c.name, c.cmd);
+                exit(0);
             }
 
             if args.len() > 1 {
-                if args[1] == name {
-                    run_cmd(name, cmd);
+                if args[1] == c.name {
+                    run_cmd(c.name, c.cmd);
                     exit(0);
                 }
 
-                if c.run && args[1] == name {
-                    run_cmd(name, cmd);
+                if c.run && args[1] == c.name {
+                    run_cmd(c.name, c.cmd);
+                    exit(0);
                 }
             }
         }
