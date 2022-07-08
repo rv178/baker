@@ -1,6 +1,8 @@
 use serde_derive::Deserialize;
 use std::env;
 use std::fs::read_to_string;
+use std::fs::File;
+use std::io::{ErrorKind, Write};
 use std::process::{exit, Command, Stdio};
 use std::time::SystemTime;
 
@@ -39,7 +41,28 @@ macro_rules! printb {
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let recipe_str = read_to_string("recipe.toml").expect("Failed to read recipe.toml");
+    let file = File::open("recipe.toml");
+
+    if let Err(e) = file {
+        if e.kind() == ErrorKind::NotFound {
+            printb!("Could not find a recipe.toml, generating one.");
+            let mut file = File::create("recipe.toml").unwrap();
+            file.write_all(b"[build]\ncmd = \"\"").unwrap();
+            exit(0);
+        } else {
+            printb!("Error: {}", e);
+        }
+    }
+
+    let mut recipe_str = String::new();
+
+    match read_to_string("recipe.toml") {
+        Ok(s) => recipe_str.push_str(&s),
+        Err(e) => {
+            printb!("Error: {}", e);
+            exit(1);
+        }
+    }
 
     let recipe: Recipe = toml::from_str(&recipe_str).expect("Failed to parse recipe.toml");
 
@@ -73,7 +96,7 @@ fn main() {
             if args.len() > 1 {
                 if args[1] == name {
                     run_cmd(name, cmd);
-                    exit(1);
+                    exit(0);
                 }
 
                 if c.run && args[1] == name {
