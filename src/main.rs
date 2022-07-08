@@ -1,8 +1,7 @@
 use serde_derive::Deserialize;
 use std::env;
-use std::fs;
-use std::process::exit;
-use std::process::Command;
+use std::fs::read_to_string;
+use std::process::{exit, Command, Stdio};
 use std::time::SystemTime;
 
 #[derive(Debug, Deserialize)]
@@ -33,11 +32,9 @@ struct Pre {
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let recipe_file =
-        fs::read_to_string("recipe.toml").expect("Something went wrong reading the file.");
+    let recipe_str = read_to_string("recipe.toml").expect("Failed to read recipe.toml");
 
-    let recipe: Recipe =
-        toml::from_str(&recipe_file).expect("Something went wrong parsing the file.");
+    let recipe: Recipe = toml::from_str(&recipe_str).expect("Failed to parse recipe.toml");
 
     if recipe.build.cmd.is_empty() {
         println!("[Baker] Build command is empty.");
@@ -84,15 +81,20 @@ fn run_cmd(name: String, cmd: String) {
     println!("[Baker] Running command: `{}` ({})", cmd, name);
     let start = SystemTime::now();
 
-    let output = Command::new("sh").arg("-c").arg(cmd).output().expect("Failed to execute command");
+    match Command::new("sh")
+        .arg("-c")
+        .arg(cmd)
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
+        .output()
+    {
+        Ok(_) => {}
+        Err(e) => {
+            println!("[Baker] Failed to execute command. Error: `{}` ({})", e, name);
+        }
+    }
     let end = SystemTime::now();
     let elapsed = end.duration_since(start);
 
-    println!(
-        "{}\n{}",
-        String::from_utf8_lossy(&output.stdout),
-        String::from_utf8_lossy(&output.stderr)
-    );
-    println!("[Baker] {}", output.status);
     println!("[Baker] Took {}ms", elapsed.unwrap_or_default().as_millis());
 }
