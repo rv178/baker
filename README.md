@@ -19,7 +19,12 @@ bake
 
 ### Configuration
 
-Baker looks for a `recipe.toml` in the root directory.
+Baker looks for a `recipe.toml` in the root directory. If it doesn't find one, it generates one:
+
+```toml
+[build]
+cmd = ""
+```
 
 ```toml
 [build]
@@ -54,3 +59,7 @@ cmd = "cargo fmt"
 ```
 
 An example config can be found in [recipe.toml](./recipe.toml)
+
+### Screenshots
+
+![Alt](https://media.discordapp.net/attachments/985433521084563486/994926621226172467/unknown.png)
