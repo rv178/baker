@@ -41,6 +41,11 @@ macro_rules! printb {
 fn main() {
     let args: Vec<String> = env::args().collect();
 
+    if args.len() > 1 && args[1].eq("-h") | args[1].eq("--help") {
+        help();
+        exit(1);
+    }
+
     let file = File::open("recipe.toml");
 
     if let Err(e) = file {
@@ -100,11 +105,6 @@ fn main() {
             }
 
             if args.len() > 1 {
-                if args[1].eq("-h") | args[1].eq("--help") {
-                    help();
-                    exit(1);
-                }
-
                 if args[1] == c.name {
                     run_cmd(c.name, c.cmd);
                 }
