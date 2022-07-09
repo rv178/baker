@@ -100,14 +100,13 @@ fn main() {
             }
 
             if args.len() > 1 {
-                if args[1] == c.name {
-                    run_cmd(c.name, c.cmd);
-                    exit(0);
+                if args[1].eq("-h") | args[1].eq("--help") {
+                    help();
+                    exit(1);
                 }
 
-                if c.run && args[1] == c.name {
+                if args[1] == c.name {
                     run_cmd(c.name, c.cmd);
-                    exit(0);
                 }
             }
         }
@@ -136,4 +135,11 @@ fn run_cmd(name: String, cmd: String) {
 
     print!("\n");
     printb!("Took {}ms", elapsed.unwrap_or_default().as_millis());
+}
+
+fn help() {
+    println!("\x1b[32m\x1b[1mBaker\x1b[0m {}", env!("CARGO_PKG_VERSION"));
+    println!("  A simple build automation tool.");
+    print!("\n");
+    println!("Link: \x1b[4m\x1b[34mhttps://github.com/rv178/baker\x1b[0m");
 }
