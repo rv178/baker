@@ -26,11 +26,6 @@ Baker looks for a `recipe.toml` in the root directory. If it doesn't find one, i
 cmd = ""
 ```
 
-```toml
-[build]
-cmd = "cargo build --release" # cmd to run on build
-```
-
 `build` is executed when the binary is invoked without any flags.
 
 Custom commands can be set using `custom`.
