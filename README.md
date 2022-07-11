@@ -11,6 +11,14 @@ bake release
 
 A binary will be copied to `./bin/bake`
 
+For building man pages, install [pandoc](https://pandoc.org/) and run:
+
+```
+bake docs
+```
+
+The exported man page will be in `./docs/baker.1`.
+
 ### Usage
 
 ```

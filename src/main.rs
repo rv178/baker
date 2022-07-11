@@ -20,6 +20,11 @@ impl Recipe {
                 printb!("Could not find a recipe.toml, generating one.");
                 let mut file = File::create("recipe.toml").unwrap();
                 file.write_all(b"[build]\ncmd = \"\"").unwrap();
+                if env::current_dir().is_ok() {
+                    printb!("Generated file in {:?}", env::current_dir().unwrap());
+                } else {
+                    printb!("Generated file.");
+                }
                 exit(0);
             } else {
                 printb!("Error: {}", e);
@@ -79,7 +84,7 @@ struct Custom {
 impl Runnable for Custom {
     fn execute(&self) {
         if self.cmd.is_empty() {
-            printb!("Command {} is empty.", self.cmd);
+            printb!("Custom command `{}` is empty.", self.cmd);
             exit(1);
         }
 
@@ -96,7 +101,7 @@ struct Pre {
 impl Runnable for Pre {
     fn execute(&self) {
         if self.cmd.is_empty() {
-            printb!("Pre {} is empty.", self.cmd);
+            printb!("Pre command `{}` is empty.", self.cmd);
             exit(1);
         }
 
@@ -193,10 +198,10 @@ fn help() {
     println!("  A simple build automation tool.");
     print!("\n");
     println!("\x1b[1mOptions:\x1b[0m ");
-    println!("\t-h | --help    \t\t Help Command");
-    println!("\t-v | --version \t\t Version");
-    println!("\t-c | --commands\t\t List Commands");
-    println!("\t[command]      \t\t Run a Command");
+    println!("\t-h | --help    \t\t Help command.");
+    println!("\t-v | --version \t\t Check version.");
+    println!("\t-c | --commands\t\t List commands.");
+    println!("\t[command]      \t\t Run a command.");
     print!("\n");
     println!("Link: \x1b[4m\x1b[34mhttps://github.com/rv178/baker/\x1b[0m");
 }

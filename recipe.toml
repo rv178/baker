@@ -16,6 +16,11 @@ name = "release"
 cmd = "cargo build --release && cp -r ./target/release/bake ./bin/bake"
 run = false
 
+[[custom]]
+name = "docs"
+cmd = "pandoc docs/baker.1.md -s -t man -o docs/baker.1"
+run = false
+
 [[pre]]
 name = "fmt"
 cmd = "cargo fmt"
