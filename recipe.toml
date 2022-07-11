@@ -1,5 +1,8 @@
 [build]
-cmd = "cargo build && cp -r ./target/debug/bake ./bin/bake"
+cmd = """
+cargo build &&
+cp -r ./target/debug/bake ./bin/bake
+"""
 
 [[custom]]
 name = "clean"
@@ -8,12 +11,19 @@ run = false
 
 [[custom]]
 name = "setup"
-cmd = "mkdir -p bin && rustup install stable && rustup default stable"
+cmd = """
+mkdir -p bin &&
+rustup install stable &&
+rustup default stable
+"""
 run = false
 
 [[custom]]
 name = "release"
-cmd = "cargo build --release && cp -r ./target/release/bake ./bin/bake"
+cmd = """
+cargo build --release &&
+cp -r ./target/release/bake ./bin/bake
+"""
 run = false
 
 [[custom]]

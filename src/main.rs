@@ -166,7 +166,7 @@ fn main() {
 }
 
 fn run_cmd(name: String, cmd: String) {
-    printb!("Running command: `{}` ({})", cmd, name);
+    printb!("Running `{}`", name);
     print!("\n");
     let start = SystemTime::now();
 
