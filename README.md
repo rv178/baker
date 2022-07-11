@@ -36,6 +36,8 @@ cmd = ""
 
 `build` is executed when the binary is invoked without any flags.
 
+#### Custom commands
+
 Custom commands can be set using `custom`.
 
 ```toml
@@ -53,6 +55,8 @@ Example:
 bake clean
 ```
 
+#### Running commands before build
+
 You can also run commands before build using `pre`.
 
 ```toml
@@ -60,6 +64,26 @@ You can also run commands before build using `pre`.
 name = "fmt"
 cmd = "cargo fmt"
 ```
+
+#### Recursion
+
+Baker also supports recursion (invoking baker inside baker):
+
+Example:
+
+```toml
+[[custom]]
+name = "docs"
+cmd = "pandoc docs/baker.1.md -s -t man -o docs/baker.1"
+run = false
+
+[[custom]]
+name = "view-docs"
+cmd ="bake docs && man ./docs/baker.1"
+run = false
+```
+
+Running `bake view-docs` will run `bake docs` and view the man page.
 
 An example config can be found in [recipe.toml](./recipe.toml)
 
