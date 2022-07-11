@@ -185,19 +185,20 @@ fn run_cmd(name: String, cmd: String) {
 }
 
 fn version() {
-    println!("\x1b[32m\x1b[1mBaker\x1b[0m {}", env!("CARGO_PKG_VERSION"));
-    println!("  A simple build automation tool.");
-    print!("\n");
-    println!("Link: \x1b[4m\x1b[34mhttps://github.com/rv178/baker\x1b[0m");
+    println!("\x1b[32m\x1b[1mBaker\x1b[0m ({})", env!("CARGO_PKG_VERSION"));
 }
 
 fn help() {
-    println!("\x1b[32m\x1b[1mBaker\x1b[0m {}", env!("CARGO_PKG_VERSION"));
-    println!("Options: ");
+    println!("\x1b[32m\x1b[1mBaker\x1b[0m");
+    println!("  A simple build automation tool.");
+    print!("\n");
+    println!("\x1b[1mOptions:\x1b[0m ");
     println!("\t-h | --help    \t\t Help Command");
     println!("\t-v | --version \t\t Version");
     println!("\t-c | --commands\t\t List Commands");
     println!("\t[command]      \t\t Run a Command");
+    print!("\n");
+    println!("Link: \x1b[4m\x1b[34mhttps://github.com/rv178/baker/\x1b[0m");
 }
 
 fn print_cmds(cmd: String) {
@@ -208,7 +209,7 @@ fn print_cmds(cmd: String) {
         let custom = recipe.custom.unwrap();
 
         for c in custom {
-            println!("\t{} {}", cmd, c.name);
+            println!("\t{} \x1b[33m{}\x1b[0m", cmd, c.name);
         }
     }
 }
