@@ -170,16 +170,20 @@ fn run_cmd(name: String, cmd: String) {
     print!("\n");
     let start = SystemTime::now();
 
-    match Command::new("sh")
-        .arg("-c")
-        .arg(cmd)
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
-        .output()
-    {
-        Ok(_) => {}
-        Err(e) => {
-            printb!("Failed to execute command. Error: `{}` ({})", e, name);
+    let cmd = cmd.split("&&").collect::<Vec<&str>>();
+    for c in cmd {
+        let cmd_arr: Vec<&str> = c.split_whitespace().collect();
+        match Command::new(cmd_arr[0])
+            .args(&cmd_arr[1..])
+            .stdout(Stdio::inherit())
+            .stderr(Stdio::inherit())
+            .output()
+        {
+            Ok(_) => {}
+            Err(e) => {
+                printb!("Error: {}", e);
+                exit(1);
+            }
         }
     }
     let end = SystemTime::now();
