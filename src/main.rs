@@ -1,10 +1,11 @@
 use serde_derive::Deserialize;
-use std::env;
-use std::fs::read_to_string;
-use std::fs::File;
-use std::io::{ErrorKind, Write};
-use std::process::{exit, Command, Stdio};
-use std::time::SystemTime;
+use::std::{
+    env,
+    fs::{read_to_string, File},
+    io::{ErrorKind, Write},
+    process::{exit, Command, Stdio},
+    time::SystemTime,
+};
 
 #[derive(Debug, Deserialize)]
 struct Recipe {
