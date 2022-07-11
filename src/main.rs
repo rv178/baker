@@ -13,9 +13,60 @@ struct Recipe {
     pre: Option<Vec<Pre>>,
 }
 
+impl Recipe {
+    fn new() -> Option<Self> {
+        if let Err(e) = File::open("recipe.toml") {
+            if e.kind() == ErrorKind::NotFound {
+                printb!("Could not find a recipe.toml, generating one.");
+                let mut file = File::create("recipe.toml").unwrap();
+                file.write_all(b"[build]\ncmd = \"\"").unwrap();
+                exit(0);
+            } else {
+                printb!("Error: {}", e);
+            }
+        }
+
+        let mut recipe_str = String::new();
+
+        match read_to_string("recipe.toml") {
+            Ok(s) => recipe_str.push_str(&s),
+            Err(e) => {
+                printb!("Error: {}", e);
+                exit(1);
+            }
+        }
+
+        let recipe: Recipe;
+
+        match toml::from_str(&recipe_str) {
+            Ok(r) => recipe = r,
+            Err(e) => {
+                printb!("Error: {}", e);
+                exit(1);
+            }
+        }
+        Some(recipe)
+    }
+}
+
+trait Runnable {
+    fn execute(&self);
+}
+
 #[derive(Debug, Deserialize)]
 struct Build {
     cmd: String,
+}
+
+impl Runnable for Build {
+    fn execute(&self) {
+        if self.cmd.is_empty() {
+            printb!("Build command is empty.");
+            exit(1);
+        }
+
+        run_cmd("build".to_string(), self.cmd.to_string());
+    }
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -25,10 +76,32 @@ struct Custom {
     run: bool,
 }
 
+impl Runnable for Custom {
+    fn execute(&self) {
+        if self.cmd.is_empty() {
+            printb!("Command {} is empty.", self.cmd);
+            exit(1);
+        }
+
+        run_cmd(self.name.to_string(), self.cmd.to_string());
+    }
+}
+
 #[derive(Debug, Deserialize, Clone)]
 struct Pre {
     name: String,
     cmd: String,
+}
+
+impl Runnable for Pre {
+    fn execute(&self) {
+        if self.cmd.is_empty() {
+            printb!("Pre {} is empty.", self.cmd);
+            exit(1);
+        }
+
+        run_cmd(self.name.to_string(), self.cmd.to_string());
+    }
 }
 
 #[macro_export]
@@ -41,58 +114,32 @@ macro_rules! printb {
 fn main() {
     let args: Vec<String> = env::args().collect();
 
+    if args.len() > 1 && args[1].eq("-v") | args[1].eq("--version") {
+        version();
+        exit(1);
+    }
+
     if args.len() > 1 && args[1].eq("-h") | args[1].eq("--help") {
         help();
         exit(1);
     }
 
-    let file = File::open("recipe.toml");
-
-    if let Err(e) = file {
-        if e.kind() == ErrorKind::NotFound {
-            printb!("Could not find a recipe.toml, generating one.");
-            let mut file = File::create("recipe.toml").unwrap();
-            file.write_all(b"[build]\ncmd = \"\"").unwrap();
-            exit(0);
-        } else {
-            printb!("Error: {}", e);
-        }
-    }
-
-    let mut recipe_str = String::new();
-
-    match read_to_string("recipe.toml") {
-        Ok(s) => recipe_str.push_str(&s),
-        Err(e) => {
-            printb!("Error: {}", e);
-            exit(1);
-        }
-    }
-
-    let recipe: Recipe;
-
-    match toml::from_str(&recipe_str) {
-        Ok(r) => recipe = r,
-        Err(e) => {
-            printb!("Error: {}", e);
-            exit(1);
-        }
-    }
-
-    if recipe.build.cmd.is_empty() {
-        printb!("Build command is empty.");
+    if args.len() > 1 && args[1].eq("-c") | args[1].eq("--commands") {
+        print_cmds(args[0].to_string());
         exit(1);
     }
+
+    let recipe: Recipe = Recipe::new().unwrap();
 
     if args.len() == 1 {
         if recipe.pre.is_some() {
             let pre = recipe.pre.unwrap();
 
             for p in pre {
-                run_cmd(p.name, p.cmd)
+                p.execute()
             }
         }
-        run_cmd("build".to_string(), recipe.build.cmd);
+        recipe.build.execute();
     }
 
     if recipe.custom.is_some() {
@@ -100,13 +147,13 @@ fn main() {
 
         for c in custom {
             if c.run && args.len() == 1 {
-                run_cmd(c.name, c.cmd);
+                c.execute();
                 exit(0);
             }
 
             if args.len() > 1 {
                 if args[1] == c.name {
-                    run_cmd(c.name, c.cmd);
+                    c.execute();
                 }
             }
         }
@@ -137,9 +184,31 @@ fn run_cmd(name: String, cmd: String) {
     printb!("Took {}ms", elapsed.unwrap_or_default().as_millis());
 }
 
-fn help() {
+fn version() {
     println!("\x1b[32m\x1b[1mBaker\x1b[0m {}", env!("CARGO_PKG_VERSION"));
     println!("  A simple build automation tool.");
     print!("\n");
     println!("Link: \x1b[4m\x1b[34mhttps://github.com/rv178/baker\x1b[0m");
+}
+
+fn help() {
+    println!("\x1b[32m\x1b[1mBaker\x1b[0m {}", env!("CARGO_PKG_VERSION"));
+    println!("Options: ");
+    println!("\t-h | --help    \t\t Help Command");
+    println!("\t-v | --version \t\t Version");
+    println!("\t-c | --commands\t\t List Commands");
+    println!("\t[command]      \t\t Run a Command");
+}
+
+fn print_cmds(cmd: String) {
+    let recipe: Recipe = Recipe::new().unwrap();
+    println!("Commands: ");
+    println!("\t{}", cmd);
+    if recipe.custom.is_some() {
+        let custom = recipe.custom.unwrap();
+
+        for c in custom {
+            println!("\t{} {}", cmd, c.name);
+        }
+    }
 }
