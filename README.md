@@ -86,7 +86,3 @@ run = false
 Running `bake view-docs` will run `bake docs` and view the man page.
 
 An example config can be found in [recipe.toml](./recipe.toml)
-
-### Screenshots
-
-![Alt](https://media.discordapp.net/attachments/985433521084563486/994926621226172467/unknown.png)
