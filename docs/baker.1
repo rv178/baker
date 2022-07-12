@@ -86,6 +86,17 @@ name = \[dq]fmt\[dq]
 cmd = \[dq]cargo fmt\[dq]
 \f[R]
 .fi
+.SS ENVIRONMENT VARIABLES
+.PP
+You can set env vars using \f[B]env\f[R].
+.IP
+.nf
+\f[C]
+[env]
+TEST_ENV=\[dq]foo\[dq]
+TEST_ENV_2=\[dq]bar\[dq]
+\f[R]
+.fi
 .SS RECURSION
 .PP
 Baker also supports recursion (invoking baker inside baker):

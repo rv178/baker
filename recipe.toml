@@ -1,7 +1,11 @@
+[env]
+BIN_NAME="bake"
+COMPILER_FLAGS="--release"
+
 [build]
 cmd = """
 cargo build &&
-cp -r ./target/debug/bake ./bin/bake
+cp -r ./target/debug/$BIN_NAME ./bin/$BIN_NAME
 """
 
 [[custom]]
@@ -21,14 +25,19 @@ run = false
 [[custom]]
 name = "release"
 cmd = """
-cargo build --release &&
-cp -r ./target/release/bake ./bin/bake
+cargo build $COMPILER_FLAGS &&
+cp -r ./target/release/$BIN_NAME ./bin/$BIN_NAME
 """
 run = false
 
 [[custom]]
 name = "docs"
 cmd = "pandoc docs/baker.1.md -s -t man -o docs/baker.1"
+run = false
+
+[[custom]]
+name = "test_env"
+cmd = "echo ./path/$BIN_NAME /$COMPILER_FLAGS/$BIN_NAME $COMPILER_FLAGS ./path //"
 run = false
 
 [[pre]]

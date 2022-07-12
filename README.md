@@ -65,6 +65,16 @@ name = "fmt"
 cmd = "cargo fmt"
 ```
 
+#### Environment variables
+
+You can set env vars using `env`.
+
+```toml
+[env]
+TEST_ENV="foo"
+TEST_ENV_2="bar"
+```
+
 #### Recursion
 
 Baker also supports recursion (invoking baker inside baker):
