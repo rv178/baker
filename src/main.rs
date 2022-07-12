@@ -1,11 +1,11 @@
-use serde_derive::Deserialize;
-use::std::{
+use ::std::{
     env,
     fs::{read_to_string, File},
     io::{ErrorKind, Write},
     process::{exit, Command, Stdio},
     time::SystemTime,
 };
+use serde_derive::Deserialize;
 
 #[derive(Debug, Deserialize)]
 struct Recipe {
@@ -42,15 +42,13 @@ impl Recipe {
             }
         }
 
-        let recipe: Recipe;
-
-        match toml::from_str(&recipe_str) {
-            Ok(r) => recipe = r,
+        let recipe: Recipe = match toml::from_str(&recipe_str) {
+            Ok(r) => r,
             Err(e) => {
                 printb!("Error: {}", e);
                 exit(1);
             }
-        }
+        };
         Some(recipe)
     }
 }
@@ -157,10 +155,8 @@ fn main() {
                 exit(0);
             }
 
-            if args.len() > 1 {
-                if args[1] == c.name {
-                    c.execute();
-                }
+            if args.len() > 1 && args[1] == c.name {
+                c.execute();
             }
         }
     }
@@ -168,7 +164,7 @@ fn main() {
 
 fn run_cmd(name: String, cmd: String) {
     printb!("Running `{}`", name);
-    print!("\n");
+    println!();
     let start = SystemTime::now();
 
     let cmd = cmd.split("&&").collect::<Vec<&str>>();
@@ -190,7 +186,7 @@ fn run_cmd(name: String, cmd: String) {
     let end = SystemTime::now();
     let elapsed = end.duration_since(start);
 
-    print!("\n");
+    println!();
     printb!("Took {}ms", elapsed.unwrap_or_default().as_millis());
 }
 
@@ -201,13 +197,13 @@ fn version() {
 fn help() {
     println!("\x1b[32m\x1b[1mBaker\x1b[0m");
     println!("  A simple build automation tool.");
-    print!("\n");
+    println!();
     println!("\x1b[1mOptions:\x1b[0m ");
     println!("\t-h | --help    \t\t Help command.");
     println!("\t-v | --version \t\t Check version.");
     println!("\t-c | --commands\t\t List commands.");
     println!("\t[command]      \t\t Run a command.");
-    print!("\n");
+    println!();
     println!("Link: \x1b[4m\x1b[34mhttps://github.com/rv178/baker/\x1b[0m");
 }
 
