@@ -1,5 +1,5 @@
 [package]
-name = "bake"
+name = "baker"
 version = "1.0.0"
 edition = "2021"
 
@@ -9,3 +9,7 @@ edition = "2021"
 serde = "1.0.138"
 serde_derive = "1.0.138"
 toml = "0.5"
+
+[[bin]]
+name = "bake"
+path = "src/main.rs"
