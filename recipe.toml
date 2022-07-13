@@ -35,11 +35,6 @@ name = "docs"
 cmd = "pandoc docs/baker.1.md -s -t man -o docs/baker.1"
 run = false
 
-[[custom]]
-name = "test_env"
-cmd = "echo ./path/$BIN_NAME /$COMPILER_FLAGS/$BIN_NAME $COMPILER_FLAGS ./path // current dir: $(pwd)}"
-run = false
-
 [[pre]]
 name = "fmt"
 cmd = "cargo fmt"
