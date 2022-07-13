@@ -163,7 +163,6 @@ fn main() {
         for c in custom {
             if c.run && args.len() == 1 {
                 c.execute();
-                exit(0);
             }
 
             if args.len() > 1 && args[1] == c.name {
