@@ -37,7 +37,7 @@ run = false
 
 [[custom]]
 name = "test_env"
-cmd = "echo ./path/$BIN_NAME /$COMPILER_FLAGS/$BIN_NAME $COMPILER_FLAGS ./path //"
+cmd = "echo ./path/$BIN_NAME /$COMPILER_FLAGS/$BIN_NAME $COMPILER_FLAGS ./path // current dir: $(pwd)}"
 run = false
 
 [[pre]]

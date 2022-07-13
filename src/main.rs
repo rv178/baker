@@ -1,7 +1,6 @@
 use ::std::{
     collections::HashMap,
     env,
-    fmt::Write as _,
     fs::{read_to_string, File},
     io::{ErrorKind, Write},
     process::{exit, Command, Stdio},
@@ -141,7 +140,7 @@ fn main() {
     if recipe.env.is_some() {
         let env = recipe.env.unwrap();
         for (key, value) in env {
-            printb!("Setting {} to \"{}\"", key, value);
+            printb!("Set {} to \"{}\"", key, value);
             env::set_var(key, value);
         }
         println!();
@@ -179,52 +178,17 @@ fn run_cmd(name: String, cmd: String) {
     println!();
     let start = SystemTime::now();
 
-    let cmd = cmd.split("&&").collect::<Vec<&str>>();
-    for c in cmd {
-        let cmds: Vec<&str> = c.split_whitespace().collect();
-        let mut cmd_arr = Vec::new();
-
-        for cmd in cmds {
-            if cmd.contains('$') {
-                // if cmd contains $ (like ./bin/$BIN_NAME) then we split the string at the $
-                // that gives us "./bin" and "BIN_NAME"
-                // we replace "BIN_NAME" with value of env var of same name
-                let cmd_split = cmd.split('$');
-                let mut cmd_str = String::new();
-                for s in cmd_split {
-                    // for directory paths (example: ./path/$BIN_NAME)
-                    if s.contains('/') {
-                        let s = s.strip_suffix('/').expect("Failed to strip / suffix");
-                        if env::var(s).is_ok() {
-                            write!(cmd_str, "{}/", env::var(s).unwrap())
-                                .expect("Failed to write to cmd_str");
-                        } else {
-                            write!(cmd_str, "{}/", s).expect("Failed to write to cmd_str");
-                        }
-                    } else if env::var(s).is_ok() {
-                        cmd_str.push_str(&env::var(s).unwrap());
-                    } else {
-                        cmd_str.push_str(s);
-                    }
-                }
-                cmd_arr.push(cmd_str);
-            } else {
-                // if none of these conditions are met then we just push the cmd to the array
-                cmd_arr.push(cmd.to_string());
-            }
-        }
-
-        match Command::new(&cmd_arr[0])
-            .args(&cmd_arr[1..])
-            .stdout(Stdio::inherit())
-            .stderr(Stdio::inherit())
-            .output()
-        {
-            Ok(_) => {}
-            Err(e) => {
-                printb!("Error: {}", e);
-                exit(1);
-            }
+    match Command::new("sh")
+        .arg("-c")
+        .arg(cmd)
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
+        .output()
+    {
+        Ok(_) => {}
+        Err(e) => {
+            printb!("Error: {}", e);
+            exit(1);
         }
     }
     let end = SystemTime::now();

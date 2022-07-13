@@ -2,6 +2,11 @@
 
 A simple build automation tool like GNU Make.
 
+### Dependencies
+
+Baker calls `sh -c <cmd>` to execute your commands. I originally wanted to directly execute the commands, but parsing variables
+and other shell syntax added a lot of extra code which could have been easily prevented with `sh -c`.
+
 ### Compiling via baker (release)
 
 ```
