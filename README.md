@@ -7,7 +7,13 @@ A simple build automation tool like GNU Make.
 Baker calls `sh -c <cmd>` to execute your commands. I originally wanted to directly execute the commands, but parsing variables
 and other shell syntax added a lot of extra code which could have been easily prevented with `sh`.
 
-### Compiling via baker (release)
+### Installing
+
+#### Arch Linux
+
+Baker is available in the [AUR](https://aur.archlinux.org/packages/baker-git) (`baker-git`).
+
+### Compiling via baker
 
 ```
 bake setup

@@ -167,6 +167,7 @@ fn main() {
 
             if args.len() > 1 && args[1] == c.name {
                 c.execute();
+                exit(1);
             }
         }
     }
