@@ -20,13 +20,13 @@ bake setup
 bake
 ```
 
+A binary will be copied to `./bin/bake`
+
 **Install**
 `sudo bake install`
 
 **Uninstall**
 `sudo bake uninstall`
-
-A binary will be copied to `./bin/bake`
 
 For building man pages, install [pandoc](https://pandoc.org/) and run:
 
