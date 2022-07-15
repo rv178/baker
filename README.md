@@ -17,8 +17,14 @@ Baker is available in the [AUR](https://aur.archlinux.org/packages/baker-git) (`
 
 ```
 bake setup
-bake release
+bake
 ```
+
+**Install**
+`sudo bake install`
+
+**Uninstall**
+`sudo bake uninstall`
 
 A binary will be copied to `./bin/bake`
 

@@ -1,11 +1,12 @@
 [env]
 BIN_NAME="bake"
 COMPILER_FLAGS="--release"
+INSTALL_PREFIX="/usr/bin"
 
 [build]
 cmd = """
-cargo build &&
-cp -r ./target/debug/$BIN_NAME ./bin/$BIN_NAME
+cargo build $COMPILER_FLAGS &&
+cp -r ./target/release/$BIN_NAME ./bin/$BIN_NAME
 """
 
 [[custom]]
@@ -23,11 +24,13 @@ rustup default stable
 run = false
 
 [[custom]]
-name = "release"
-cmd = """
-cargo build $COMPILER_FLAGS &&
-cp -r ./target/release/$BIN_NAME ./bin/$BIN_NAME
-"""
+name = "install"
+cmd = "cp ./bin/$BIN_NAME $INSTALL_PREFIX/$BIN_NAME"
+run = false
+
+[[custom]]
+name = "uninstall"
+cmd = "rm -rf $INSTALL_PREFIX/$BIN_NAME"
 run = false
 
 [[custom]]
