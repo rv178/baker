@@ -140,10 +140,8 @@ fn main() {
     if recipe.env.is_some() {
         let env = recipe.env.unwrap();
         for (key, value) in env {
-            printb!("Set {} to \"{}\"", key, value);
             env::set_var(key, value);
         }
-        println!();
     }
 
     if args.len() == 1 {
@@ -174,8 +172,6 @@ fn main() {
 }
 
 fn run_cmd(name: String, cmd: String) {
-    printb!("Running \"{}\"", name);
-    println!();
     let start = SystemTime::now();
 
     match Command::new("sh")
@@ -191,11 +187,8 @@ fn run_cmd(name: String, cmd: String) {
             exit(1);
         }
     }
-    let end = SystemTime::now();
-    let elapsed = end.duration_since(start);
 
-    println!();
-    printb!("Took {}ms", elapsed.unwrap_or_default().as_millis());
+    printb!("Job \"{}\" finished in {}ms.", name, start.elapsed().unwrap().as_millis());
 }
 
 fn version() {
