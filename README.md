@@ -38,9 +38,13 @@ The exported man page will be in `./docs/baker.1`.
 
 ### Usage
 
-```
-bake
-```
+-   Execute command in build: `bake`
+
+-   List all commands: `bake [-c, --commands]`
+
+-   Show help message: `bake [-h, --help]`
+
+-   Run a custom command: `bake [command]`
 
 ### Configuration
 

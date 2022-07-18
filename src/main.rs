@@ -210,7 +210,7 @@ fn help() {
 
 fn print_cmds() {
     let recipe: Recipe = Recipe::new().unwrap();
-    println!("\x1b[32mUsage: bake [OPTION]\x1b[0m");
+    println!("\x1b[32mUsage: bake [command]\x1b[0m");
     if recipe.custom.is_some() {
         let custom = recipe.custom.unwrap();
 
