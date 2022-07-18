@@ -131,7 +131,7 @@ fn main() {
     }
 
     if args.len() > 1 && args[1].eq("-c") | args[1].eq("--commands") {
-        print_cmds(args[0].to_string());
+        print_cmds();
         exit(1);
     }
 
@@ -208,15 +208,14 @@ fn help() {
     println!("Link: \x1b[4m\x1b[34mhttps://github.com/rv178/baker/\x1b[0m");
 }
 
-fn print_cmds(cmd: String) {
+fn print_cmds() {
     let recipe: Recipe = Recipe::new().unwrap();
-    println!("Commands: ");
-    println!("\t{}", cmd);
+    println!("\x1b[32mUsage: bake [OPTION]\x1b[0m");
     if recipe.custom.is_some() {
         let custom = recipe.custom.unwrap();
 
         for c in custom {
-            println!("\t{} \x1b[33m{}\x1b[0m", cmd, c.name);
+            println!("\x1b[38;5;8m>\x1b[0m {}", c.name);
         }
     }
 }
