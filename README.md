@@ -50,6 +50,9 @@ The exported man page will be in `./docs/baker.1`.
 
 Baker looks for a `recipe.toml` in the root directory. If it doesn't find one, it generates one:
 
+For tracking command execution time and knowing which command is being executed set `debug = true` in the `recipe.toml`. If
+`debug` is set to `false` or not set at all baker will just print stdout/stderr of the command being executed.
+
 ```toml
 [build]
 cmd = ""

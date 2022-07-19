@@ -42,6 +42,11 @@ Run a command
 .PP
 Baker looks for a \f[B]recipe.toml\f[R] in the root directory.
 If it doesn\[cq]t find one, it generates one:
+.PP
+For tracking command execution time and knowing which command is being
+executed set \f[V]debug = true\f[R] in the \f[V]recipe.toml\f[R].
+If \f[V]debug\f[R] is set to \f[V]false\f[R] or not set at all baker
+will just print stdout/stderr of the command being executed.
 .IP
 .nf
 \f[C]

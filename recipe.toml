@@ -1,3 +1,5 @@
+debug = true
+
 [env]
 BIN_NAME="bake"
 COMPILER_FLAGS="--release"
@@ -33,7 +35,7 @@ run = false
 [custom.docs]
 name = "docs"
 cmd = "pandoc docs/baker.1.md -s -t man -o docs/baker.1"
-run = false
+run = true
 
 [pre.fmt]
 cmd = "cargo fmt"

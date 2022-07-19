@@ -14,6 +14,7 @@ struct Recipe {
     custom: Option<HashMap<String, Custom>>,
     pre: Option<HashMap<String, Pre>>,
     env: Option<HashMap<String, String>>,
+    debug: Option<bool>,
 }
 
 impl Recipe {
@@ -56,7 +57,7 @@ impl Recipe {
 }
 
 trait Runnable {
-    fn execute(&self);
+    fn execute(&self, debug: bool);
 }
 
 #[derive(Debug, Deserialize)]
@@ -76,13 +77,13 @@ struct Pre {
 }
 
 impl Runnable for Build {
-    fn execute(&self) {
+    fn execute(&self, debug: bool) {
         if self.cmd.is_empty() {
             printb!("Build command is empty.");
             exit(1);
         }
 
-        run_cmd("build".to_string(), self.cmd.to_string());
+        run_cmd("build".to_string(), self.cmd.to_string(), debug);
     }
 }
 
@@ -113,6 +114,8 @@ fn main() {
 
     let recipe: Recipe = Recipe::new().unwrap();
 
+    let debug = recipe.debug.unwrap_or(false);
+
     if recipe.env.is_some() {
         let env = recipe.env.unwrap();
         for (key, value) in env {
@@ -123,42 +126,59 @@ fn main() {
     if args.len() == 1 && recipe.pre.is_some() {
         let pre = recipe.pre.unwrap();
         for (name, p) in pre {
-            run_cmd(name.to_string(), p.cmd.to_string());
+            run_cmd(name.to_string(), p.cmd.to_string(), debug);
         }
-        recipe.build.execute();
+        recipe.build.execute(debug);
     }
 
     if recipe.custom.is_some() {
         let custom = recipe.custom.unwrap();
         for (name, c) in custom {
             if c.run && args.len() == 1 {
-                run_cmd(name.to_string(), c.cmd.to_string());
+                run_cmd(name.to_string(), c.cmd.to_string(), debug);
             }
             if args.len() > 1 && args[1] == name {
-                run_cmd(name.to_string(), c.cmd.to_string());
+                run_cmd(name.to_string(), c.cmd.to_string(), debug);
             }
         }
     }
 }
 
-fn run_cmd(name: String, cmd: String) {
-    let start = SystemTime::now();
+fn run_cmd(name: String, cmd: String, debug: bool) {
+    if debug {
+        let start = SystemTime::now();
 
-    match Command::new("sh")
-        .arg("-c")
-        .arg(&cmd)
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
-        .output()
-    {
-        Ok(_) => {}
-        Err(e) => {
-            printb!("Error: {}", e);
-            exit(1);
+        match name.as_str() {
+            "build" => {
+                println!();
+                printb!("Running build command.");
+            }
+            _ => {
+                println!();
+                printb!("Running hook \"{}\".", name);
+            }
         }
+        run(cmd);
+        printb!("Finished in {}ms.", start.elapsed().unwrap().as_millis());
+    } else {
+        run(cmd);
     }
 
-    printb!("Job \"{}\" finished in {}ms.", &name, start.elapsed().unwrap().as_millis());
+    fn run(cmd: String) {
+        match Command::new("sh")
+            .arg("-c")
+            .arg(&cmd)
+            .stdout(Stdio::inherit())
+            .stderr(Stdio::inherit())
+            .output()
+        {
+            Ok(_) => {}
+            Err(e) => {
+                printb!("Error: {}", e);
+                exit(1);
+            }
+        }
+    }
 }
 
 fn version() {
