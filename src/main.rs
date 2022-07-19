@@ -11,8 +11,8 @@ use serde_derive::Deserialize;
 #[derive(Debug, Deserialize)]
 struct Recipe {
     build: Build,
-    custom: Option<Vec<Custom>>,
-    pre: Option<Vec<Pre>>,
+    custom: Option<HashMap<String, Custom>>,
+    pre: Option<HashMap<String, Pre>>,
     env: Option<HashMap<String, String>>,
 }
 
@@ -64,6 +64,17 @@ struct Build {
     cmd: String,
 }
 
+#[derive(Debug, Deserialize, Clone)]
+struct Custom {
+    cmd: String,
+    run: bool,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+struct Pre {
+    cmd: String,
+}
+
 impl Runnable for Build {
     fn execute(&self) {
         if self.cmd.is_empty() {
@@ -72,41 +83,6 @@ impl Runnable for Build {
         }
 
         run_cmd("build".to_string(), self.cmd.to_string());
-    }
-}
-
-#[derive(Debug, Deserialize, Clone)]
-struct Custom {
-    name: String,
-    cmd: String,
-    run: bool,
-}
-
-impl Runnable for Custom {
-    fn execute(&self) {
-        if self.cmd.is_empty() {
-            printb!("Custom command \"{}\" is empty.", self.cmd);
-            exit(1);
-        }
-
-        run_cmd(self.name.to_string(), self.cmd.to_string());
-    }
-}
-
-#[derive(Debug, Deserialize, Clone)]
-struct Pre {
-    name: String,
-    cmd: String,
-}
-
-impl Runnable for Pre {
-    fn execute(&self) {
-        if self.cmd.is_empty() {
-            printb!("Pre command \"{}\" is empty.", self.cmd);
-            exit(1);
-        }
-
-        run_cmd(self.name.to_string(), self.cmd.to_string());
     }
 }
 
@@ -144,28 +120,22 @@ fn main() {
         }
     }
 
-    if args.len() == 1 {
-        if recipe.pre.is_some() {
-            let pre = recipe.pre.unwrap();
-
-            for p in pre {
-                p.execute()
-            }
+    if args.len() == 1 && recipe.pre.is_some() {
+        let pre = recipe.pre.unwrap();
+        for (name, p) in pre {
+            run_cmd(name.to_string(), p.cmd.to_string());
         }
         recipe.build.execute();
     }
 
     if recipe.custom.is_some() {
         let custom = recipe.custom.unwrap();
-
-        for c in custom {
+        for (name, c) in custom {
             if c.run && args.len() == 1 {
-                c.execute();
+                run_cmd(name.to_string(), c.cmd.to_string());
             }
-
-            if args.len() > 1 && args[1] == c.name {
-                c.execute();
-                exit(1);
+            if args.len() > 1 && args[1] == name {
+                run_cmd(name.to_string(), c.cmd.to_string());
             }
         }
     }
@@ -176,7 +146,7 @@ fn run_cmd(name: String, cmd: String) {
 
     match Command::new("sh")
         .arg("-c")
-        .arg(cmd)
+        .arg(&cmd)
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .output()
@@ -188,7 +158,7 @@ fn run_cmd(name: String, cmd: String) {
         }
     }
 
-    printb!("Job \"{}\" finished in {}ms.", name, start.elapsed().unwrap().as_millis());
+    printb!("Job \"{}\" finished in {}ms.", &name, start.elapsed().unwrap().as_millis());
 }
 
 fn version() {
@@ -214,8 +184,8 @@ fn print_cmds() {
     if recipe.custom.is_some() {
         let custom = recipe.custom.unwrap();
 
-        for c in custom {
-            println!("\x1b[38;5;8m>\x1b[0m {}", c.name);
+        for (name, _custom) in custom {
+            println!("\x1b[38;5;8m>\x1b[0m {}", name);
         }
     }
 }

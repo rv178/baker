@@ -58,8 +58,9 @@ Custom commands can be set using \f[B]custom\f[R].
 .IP
 .nf
 \f[C]
-[[custom]]
-name = \[dq]clean\[dq] # name of cmd
+# clean is taken as the name of the custom command
+
+[custom.clean]
 cmd = \[dq]cargo clean\[dq] # cmd
 run = false # if it should run after build is executed
 \f[R]
@@ -81,8 +82,9 @@ You can also run commands before build using \f[B]pre\f[R].
 .IP
 .nf
 \f[C]
-[[pre]]
-name = \[dq]fmt\[dq]
+# fmt is taken as the name of the pre command
+
+[pre.fmt]
 cmd = \[dq]cargo fmt\[dq]
 \f[R]
 .fi
@@ -105,13 +107,11 @@ Example:
 .IP
 .nf
 \f[C]
-[[custom]]
-name = \[dq]docs\[dq]
+[custom.docs]
 cmd = \[dq]pandoc docs/baker.1.md -s -t man -o docs/baker.1\[dq]
 run = false
 
-[[custom]]
-name = \[dq]view-docs\[dq]
+[custom.view-docs]
 cmd =\[dq]bake docs && man ./docs/baker.1\[dq]
 run = false
 \f[R]

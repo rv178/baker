@@ -9,13 +9,11 @@ cargo build $COMPILER_FLAGS &&
 cp -r ./target/release/$BIN_NAME ./bin/$BIN_NAME
 """
 
-[[custom]]
-name = "clean"
+[custom.clean]
 cmd = "cargo clean"
 run = false
 
-[[custom]]
-name = "setup"
+[custom.setup]
 cmd = """
 mkdir -p bin &&
 rustup install stable &&
@@ -23,21 +21,19 @@ rustup default stable
 """
 run = false
 
-[[custom]]
-name = "install"
+[custom.install]
 cmd = "cp ./bin/$BIN_NAME $INSTALL_PREFIX/$BIN_NAME"
 run = false
 
-[[custom]]
+[custom.uninstall]
 name = "uninstall"
 cmd = "rm -rf $INSTALL_PREFIX/$BIN_NAME"
 run = false
 
-[[custom]]
+[custom.docs]
 name = "docs"
 cmd = "pandoc docs/baker.1.md -s -t man -o docs/baker.1"
 run = false
 
-[[pre]]
-name = "fmt"
+[pre.fmt]
 cmd = "cargo fmt"

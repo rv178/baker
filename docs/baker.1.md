@@ -44,8 +44,9 @@ cmd = ""
 Custom commands can be set using **custom**.
 
 ```toml
-[[custom]]
-name = "clean" # name of cmd
+# clean is taken as the name of the custom command
+
+[custom.clean]
 cmd = "cargo clean" # cmd
 run = false # if it should run after build is executed
 ```
@@ -63,8 +64,9 @@ bake clean
 You can also run commands before build using **pre**.
 
 ```
-[[pre]]
-name = "fmt"
+# fmt is taken as the name of the pre command
+
+[pre.fmt]
 cmd = "cargo fmt"
 ```
 
@@ -85,13 +87,11 @@ Baker also supports recursion (invoking baker inside baker):
 Example:
 
 ```toml
-[[custom]]
-name = "docs"
+[custom.docs]
 cmd = "pandoc docs/baker.1.md -s -t man -o docs/baker.1"
 run = false
 
-[[custom]]
-name = "view-docs"
+[custom.view-docs]
 cmd ="bake docs && man ./docs/baker.1"
 run = false
 ```
