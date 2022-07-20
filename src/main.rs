@@ -119,6 +119,9 @@ fn main() {
     if recipe.env.is_some() {
         let env = recipe.env.unwrap();
         for (key, value) in env {
+            if debug {
+                printb!("Setting \"{}\" to \"{}\".", key, value);
+            }
             env::set_var(key, value);
         }
     }
