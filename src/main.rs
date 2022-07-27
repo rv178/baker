@@ -149,10 +149,12 @@ fn main() {
         }
     }
 
-    if args.len() == 1 && recipe.pre.is_some() {
-        let pre = recipe.pre.unwrap();
-        for (name, p) in pre {
-            p.execute(name, debug);
+    if args.len() == 1 {
+        if recipe.pre.is_some() {
+            let pre = recipe.pre.unwrap();
+            for (name, p) in pre {
+                p.execute(name, debug);
+            }
         }
         recipe.build.execute("build".to_string(), debug);
     }
