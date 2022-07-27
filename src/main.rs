@@ -132,6 +132,8 @@ fn main() {
             run_cmd(name.to_string(), p.cmd.to_string(), debug);
         }
         recipe.build.execute(debug);
+    } else {
+        recipe.build.execute(debug);
     }
 
     if recipe.custom.is_some() {
