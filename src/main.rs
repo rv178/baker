@@ -7,6 +7,7 @@ use ::std::{
     time::SystemTime,
 };
 use serde_derive::Deserialize;
+use std::cmp::Ordering;
 
 #[derive(Debug, Deserialize)]
 struct Recipe {
@@ -57,7 +58,7 @@ impl Recipe {
 }
 
 trait Runnable {
-    fn execute(&self, debug: bool);
+    fn execute(&self, name: String, debug: bool);
 }
 
 #[derive(Debug, Deserialize)]
@@ -77,13 +78,35 @@ struct Pre {
 }
 
 impl Runnable for Build {
-    fn execute(&self, debug: bool) {
+    fn execute(&self, name: String, debug: bool) {
         if self.cmd.is_empty() {
             printb!("Build command is empty.");
             exit(1);
         }
 
-        run_cmd("build".to_string(), self.cmd.to_string(), debug);
+        run_cmd(name, self.cmd.to_string(), debug);
+    }
+}
+
+impl Runnable for Custom {
+    fn execute(&self, name: String, debug: bool) {
+        if self.cmd.is_empty() {
+            printb!("Custom command is empty.");
+            exit(1);
+        }
+
+        run_cmd(name, self.cmd.to_string(), debug);
+    }
+}
+
+impl Runnable for Pre {
+    fn execute(&self, name: String, debug: bool) {
+        if self.cmd.is_empty() {
+            printb!("Pre command is empty.");
+            exit(1);
+        }
+
+        run_cmd(name, self.cmd.to_string(), debug);
     }
 }
 
@@ -129,21 +152,28 @@ fn main() {
     if args.len() == 1 && recipe.pre.is_some() {
         let pre = recipe.pre.unwrap();
         for (name, p) in pre {
-            run_cmd(name.to_string(), p.cmd.to_string(), debug);
+            p.execute(name, debug);
         }
-        recipe.build.execute(debug);
-    } else {
-        recipe.build.execute(debug);
+        recipe.build.execute("build".to_string(), debug);
     }
 
     if recipe.custom.is_some() {
         let custom = recipe.custom.unwrap();
         for (name, c) in custom {
-            if c.run && args.len() == 1 {
-                run_cmd(name.to_string(), c.cmd.to_string(), debug);
-            }
-            if args.len() > 1 && args[1] == name {
-                run_cmd(name.to_string(), c.cmd.to_string(), debug);
+            match args.len().cmp(&1) {
+                Ordering::Equal => {
+                    if c.run {
+                        c.execute(name, debug);
+                    }
+                }
+                Ordering::Less => {
+                    exit(1);
+                }
+                Ordering::Greater => {
+                    if args[1] == name {
+                        c.execute(name, debug);
+                    }
+                }
             }
         }
     }
