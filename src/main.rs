@@ -1,4 +1,5 @@
 use ::std::{
+    cmp::Ordering,
     collections::HashMap,
     env,
     fs::{read_to_string, File},
@@ -7,7 +8,6 @@ use ::std::{
     time::SystemTime,
 };
 use serde_derive::Deserialize;
-use std::cmp::Ordering;
 
 #[derive(Debug, Deserialize)]
 struct Recipe {
@@ -195,24 +195,39 @@ fn run_cmd(name: String, cmd: String, debug: bool) {
                 printb!("Running hook \"{}\".", name);
             }
         }
-        run(cmd);
+        run(cmd, debug);
         printb!("Finished in {}ms.", start.elapsed().unwrap().as_millis());
     } else {
-        run(cmd);
+        run(cmd, debug);
     }
 
-    fn run(cmd: String) {
-        match Command::new("sh")
-            .arg("-c")
-            .arg(&cmd)
-            .stdout(Stdio::inherit())
-            .stderr(Stdio::inherit())
-            .output()
-        {
-            Ok(_) => {}
-            Err(e) => {
-                printb!("Error: {}", e);
-                exit(1);
+    fn run(cmd: String, debug: bool) {
+        let cmd = cmd.split("&&").collect::<Vec<&str>>();
+
+        for command in cmd {
+            let split: Vec<&str> = command.split_whitespace().collect();
+            let mut cmd_arr: Vec<String> = Vec::new();
+
+            for item in split {
+                let parsed = shellexpand::full(&item).unwrap();
+                cmd_arr.push(parsed.to_string());
+            }
+
+            if debug {
+                printb!("Command: {:?}", cmd_arr);
+            }
+
+            match Command::new(&cmd_arr[0])
+                .args(&cmd_arr[1..])
+                .stdout(Stdio::inherit())
+                .stderr(Stdio::inherit())
+                .output()
+            {
+                Ok(_) => {}
+                Err(e) => {
+                    printb!("Error: {}", e);
+                    exit(1);
+                }
             }
         }
     }
