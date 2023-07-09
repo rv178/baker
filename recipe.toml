@@ -28,12 +28,10 @@ cmd = "cp ./bin/$BIN_NAME $INSTALL_PREFIX/$BIN_NAME"
 run = false
 
 [custom.uninstall]
-name = "uninstall"
 cmd = "rm -rf $INSTALL_PREFIX/$BIN_NAME"
 run = false
 
 [custom.docs]
-name = "docs"
 cmd = "pandoc docs/baker.1.md -s -t man -o docs/baker.1"
 run = true
 
