@@ -1,4 +1,4 @@
-use crate::{error, info, utils};
+use crate::{debug, error, utils};
 use serde_derive::Deserialize;
 use std::{
     collections::HashMap,
@@ -86,17 +86,36 @@ impl Recipe {
             let start = SystemTime::now();
             match ty {
                 Type::Build => {
-                    info!("running build command.");
+                    debug!("running {}build command{}.", utils::GREEN, utils::RESET);
                 }
                 Type::Custom(s) => {
-                    info!("running custom hook \"{}\".", s);
+                    debug!(
+                        "running {}custom{} hook \"{}{}{}\".",
+                        utils::GREEN,
+                        utils::RESET,
+                        utils::YELLOW,
+                        s,
+                        utils::RESET
+                    );
                 }
                 Type::Pre(s) => {
-                    info!("running pre hook \"{}\".", s);
+                    debug!(
+                        "running {}pre{} hook \"{}{}{}\".",
+                        utils::GREEN,
+                        utils::RESET,
+                        utils::YELLOW,
+                        s,
+                        utils::RESET
+                    );
                 }
             }
             task.run();
-            info!("finished in {}ms.", start.elapsed().unwrap().as_millis());
+            debug!(
+                "finished in {}{}ms{}.",
+                utils::YELLOW,
+                start.elapsed().unwrap().as_millis(),
+                utils::RESET
+            );
         } else {
             task.run();
         }
@@ -104,7 +123,17 @@ impl Recipe {
 
     pub fn set_env_vars(&self) {
         for (key, value) in &self.env {
-            info!("setting \"{}\" to \"{}\".", key, value);
+            if self.debug {
+                debug!(
+                    "setting \"{}{}{}\" to \"{}{}{}\".",
+                    utils::YELLOW,
+                    key,
+                    utils::RESET,
+                    utils::YELLOW,
+                    value,
+                    utils::RESET
+                );
+            }
             unsafe {
                 env::set_var(key, value);
             }
@@ -112,13 +141,17 @@ impl Recipe {
     }
 
     pub fn print_cmds(&self) {
-        println!("\x1b[32mUsage: bake [command]\x1b[0m");
+        println!("{}Usage: bake [command]{}", utils::GREEN, utils::RESET);
         for name in self.custom.keys() {
             if self.custom[name].run {
                 println!("{}> {}{}{}", utils::BLACK, utils::BLUE, name, utils::RESET);
             } else {
                 println!("{}>{} {}", utils::BLACK, utils::RESET, name);
             }
+        }
+        println!("{}Configured pre hooks:{}", utils::GREEN, utils::RESET);
+        for name in self.pre.keys() {
+            println!("{}>{} {}", utils::BLACK, utils::RESET, name);
         }
     }
 }

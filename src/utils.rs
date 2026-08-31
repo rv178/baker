@@ -5,14 +5,19 @@ macro_rules! log {
     });
 }
 
-#[macro_export]
-macro_rules! info {
-    ($($arg:tt)*) => ($crate::log!("\x1b[32m", "info", $($arg)*));
-}
+// #[macro_export]
+// macro_rules! info {
+//     ($($arg:tt)*) => ($crate::log!("\x1b[32m", "info", $($arg)*));
+// }
 
 #[macro_export]
 macro_rules! error {
     ($($arg:tt)*) => ($crate::log!("\x1b[31m", "error", $($arg)*));
+}
+
+#[macro_export]
+macro_rules! debug {
+    ($($arg:tt)*) => ($crate::log!("\x1b[38;5;8m", "debug", $($arg)*));
 }
 
 pub const RESET: &str = "\x1b[0m";
