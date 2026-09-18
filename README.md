@@ -9,6 +9,12 @@ and other shell syntax added a lot of extra code which could have been easily pr
 
 ### Installing
 
+#### With Cargo
+
+```
+cargo install baker-build
+```
+
 #### Arch Linux
 
 Baker is available in the [AUR](https://aur.archlinux.org/packages/baker-git) (`baker-git`).
