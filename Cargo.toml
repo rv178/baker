@@ -1,6 +1,14 @@
 [package]
-name = "baker"
+name = "baker-build"
 version = "1.0.0"
+authors = ["rv <hey@rohith.net>"]
+license = "MIT"
+description = "Simple build automation tool"
+homepage = "https://github.com/rv178/baker"
+repository = "https://github.com/rv178/baker"
+keywords = [ "automation", "build-tool"]
+categories = ["command-line-utilities"]
+readme = "README.md"
 edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
