@@ -5,10 +5,10 @@ macro_rules! log {
     });
 }
 
-// #[macro_export]
-// macro_rules! info {
-//     ($($arg:tt)*) => ($crate::log!("\x1b[32m", "info", $($arg)*));
-// }
+#[macro_export]
+macro_rules! info {
+    ($($arg:tt)*) => ($crate::log!("\x1b[32m", "info", $($arg)*));
+}
 
 #[macro_export]
 macro_rules! error {

@@ -1,5 +1,5 @@
 use crate::config::{Recipe, Type};
-use std::{cmp, env, process::exit};
+use std::{cmp::Ordering, env, process::exit};
 
 mod config;
 mod utils;
@@ -8,7 +8,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     match args.len().cmp(&1) {
-        cmp::Ordering::Equal => {
+        Ordering::Equal => {
             let recipe: Recipe = Recipe::new();
             recipe.set_env_vars();
 
@@ -24,7 +24,7 @@ fn main() {
                 }
             }
         }
-        cmp::Ordering::Greater => match args[1].as_str() {
+        Ordering::Greater => match args[1].as_str() {
             "-h" | "--help" => {
                 utils::help();
             }
@@ -44,7 +44,7 @@ fn main() {
                 }
             }
         },
-        cmp::Ordering::Less => {
+        Ordering::Less => {
             exit(1);
         }
     }

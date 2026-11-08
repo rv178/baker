@@ -1,6 +1,6 @@
 [package]
 name = "baker-build"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["rv <hey@rohith.net>"]
 license = "MIT"
 description = "Simple build automation tool"

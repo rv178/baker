@@ -1,10 +1,9 @@
-use crate::{debug, error, utils};
+use crate::{debug, error, info, utils};
 use serde_derive::Deserialize;
 use std::{
     collections::HashMap,
-    env,
-    fs::{File, read_to_string},
-    io::{ErrorKind, Write},
+    env, fs,
+    io::{self, ErrorKind, Write},
     process::{Command, Stdio, exit},
     time::SystemTime,
 };
@@ -52,17 +51,33 @@ pub enum Type<'a> {
 impl Recipe {
     pub fn new() -> Self {
         let mut rec_str = String::new();
-        match read_to_string("recipe.toml") {
+        match fs::read_to_string("recipe.toml") {
             Ok(s) => rec_str.push_str(&s),
             Err(e) => match e.kind() {
                 ErrorKind::NotFound => {
-                    error!("could not find recipe.toml, generating one.");
-                    let mut f = File::create("recipe.toml").unwrap();
-                    f.write_all(b"[build]\ncmd = \"\"").unwrap();
-                    exit(0);
+                    print!(
+                        "\x1b[31merror:\x1b[0m could not find recipe.toml, generate one? [y/N]: "
+                    );
+                    io::stdout().flush().ok();
+
+                    let mut input = String::new();
+                    io::stdin().read_line(&mut input).ok();
+
+                    match input.trim().to_lowercase().as_str() {
+                        "y" | "yes" => {
+                            fs::write("recipe.toml", "[build]\ncmd = \"\"").unwrap();
+                            info!("wrote recipe.toml at {:?}.", env::current_dir().unwrap());
+                            exit(0);
+                        }
+                        _ => {
+                            info!("did not write recipe.toml.");
+                            exit(0);
+                        }
+                    }
                 }
                 _ => {
                     error!("{}", e);
+                    exit(1);
                 }
             },
         }
